@@ -302,9 +302,10 @@ The renv lock file is updated by you when you run the command to snapshot. This 
 Install an old version of a package: 
 
 ```{r}
+install.packages("devtools")
 library(devtools)
-#devtools::install_version('connectapi', '0.1.1.1')
-#library(connectapi)
+devtools::install_version('connectapi', '0.1.1.1')
+library(connectapi)
 ```
 
 
@@ -337,6 +338,13 @@ renv::revert(commit = commit)
 ```
 
 Note: Currently, only Git repositories are supported by renv::history() and renv::revert().
+
+*Setting up projects that already have renv*
+
+This is easy, just run this command after cloning the project down and your environment will match the environment in the lock file: 
+
+`renv::restore()`
+
 
 *Advanced renv*
 
@@ -428,6 +436,12 @@ Check your current repo with: `options('repos')`
 For example, you might see: `https://packagemanager.rstudio.com/all/latest` or `https://cran.rstudio.com/`.
 
 Change your repo with: `options(repos = c(REPO_NAME = "https://colorado.rstudio.com/rspm/cran/__linux__/focal/2022-06-29"))` or `options(repos = c(REPO_NAME = "https://packagemanager.rstudio.com/all/latest"))`
+
+Error messages: 
+
+> renv took longer than expected (11 seconds) to activate the sandbox.
+
+Use `usethis::edit_r_environ(scope = c("user"))` to open and edit the `.Renviron` file to add RENV_CONFIG_SANDBOX_ENABLED=FALSE. Restart session. 
 
 ## Manifest
 
