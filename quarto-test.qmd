@@ -302,7 +302,7 @@ The renv lock file is updated by you when you run the command to snapshot. This 
 Install an old version of a package: 
 
 ```{r}
-install.packages("devtools")
+renv::install("devtools") # Shorter than install.packages("devtools")
 library(devtools)
 devtools::install_version('connectapi', '0.1.1.1')
 library(connectapi)
@@ -344,10 +344,9 @@ Note: Currently, only Git repositories are supported by renv::history() and renv
 
 *Setting up projects that already have renv*
 
-This is easy, just run this command after cloning the project down and your environment will match the environment in the lock file: 
+This is easy, just run this command after cloning the project down and your environment will match the environment in the lock file: `renv::restore()`
 
-`renv::restore()`
-
+It might also be good to make sure that you've updated to the latest versions of all packages if that aligns with your package management strategy prior to making any code changes: `renv::update()``
 
 *Advanced renv*
 
