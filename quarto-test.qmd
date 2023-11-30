@@ -285,16 +285,30 @@ Look at the renv.lock file and see the information that has been captured about 
 
 *Making updates*
 
+Add / change the packages being called in the project: 
+
 ```{r}
+install.packages("arrow")
 library(arrow)
+library(rsconnect)
+```
+
+Renv will detect that packages have been added when you check the current status with `renv::status()`
+
+Update the lock file with `renv::snapshot()`
+
+The renv lock file is updated by you when you run the command to snapshot. This means you can update packages, or install new packages, without changing your lock file.
+
+Install an old version of a package: 
+
+```{r}
+library(devtools)
+#devtools::install_version('connectapi', '0.1.1.1')
+#library(connectapi)
 ```
 
 
-Try installing a new package and then look at the renv.lock file. What did you expect to happen? What do you see?
 
-Now try running `renv::snapshot()`. What do you see now when you look at the renv.lock file?
-
-The renv lock file is updated by you when you run the command to snapshot. This means you can update packages, or install new packages, without changing your lock file.
 
 Remove packages that are no longer needed with:
 
@@ -485,6 +499,8 @@ The manifest should declare the details on the environment, including R version,
       }
     },
 ```
+
+The renv generated .Rprofile file should not be included in deployments to RStudio Connect.
 
 ## Environment Variables
 
