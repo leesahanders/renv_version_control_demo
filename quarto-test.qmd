@@ -318,27 +318,38 @@ Remove packages that are no longer needed with:
 
 *How to revert*
 
-Practice updating the packages your project relies on, each time saving to git. You can see the history of your changes with:
+We can easily revert back the current session. Install another old package, this time using renv for the version: 
 
-`renv::history()`
+```{r}
+# install digest 0.6.19
+renv::install("digest@0.6.19")
 
-If you want to revert back to an earlier snapshot you can do that with:
+# save library state to lockfile
+renv::snapshot()
 
-```         
+# remove digest from library
+renv::remove("digest")
+```
+
+We can revert back (to the current commit and re-add digest@0.6.19) with: 
+
+```{r}
 ## Revert to the most recent snapshot 
 renv::revert()
+```
 
-## Alternatively we can revert to a specific snapshot by specifying the commit: 
-db <- renv::history()
+If you want to revert back to an earlier snapshot saved into git you can do that with:
 
-# choose an older commit
-commit <- db$commit[5]
-
-# revert to that version of the lockfile
+```{r}
 renv::revert(commit = commit)
 ```
 
-Note: Currently, only Git repositories are supported by renv::history() and renv::revert().
+See the commit history with: 
+`renv::history()`
+
+Update your session for the correct versions to be pulled in. 
+
+Practice updating the packages your project relies on, each time saving to git. Note: Currently, only Git repositories are supported by renv::history() and renv::revert().
 
 *Setting up projects that already have renv*
 
