@@ -264,9 +264,9 @@ renv helps you track and control package changes - making it easy to revert back
 
 *Terms*
 
-- R Project - a special kind of directory of files and supporting functionality. 
-- Package - a collection of functions beyond base R that developers can install and use. 
-- Library - a directory containing installed packages.
+-   R Project - a special kind of directory of files and supporting functionality.
+-   Package - a collection of functions beyond base R that developers can install and use.
+-   Library - a directory containing installed packages.
 
 *Workflow*
 
@@ -285,7 +285,7 @@ Look at the renv.lock file and see the information that has been captured about 
 
 *Making updates*
 
-Add / change the packages being called in the project: 
+Add / change the packages being called in the project:
 
 ```{r}
 install.packages("arrow")
@@ -299,7 +299,7 @@ Update the lock file with `renv::snapshot()`
 
 The renv lock file is updated by you when you run the command to snapshot. This means you can update packages, or install new packages, without changing your lock file.
 
-Install an old version of a package: 
+Install an old version of a package:
 
 ```{r}
 renv::install("devtools") # Shorter than install.packages("devtools")
@@ -318,7 +318,7 @@ Remove packages that are no longer needed with:
 
 *How to revert*
 
-We can easily revert back the current session. Install another old package, this time using renv for the version: 
+We can easily revert back the current session. Install another old package, this time using renv for the version:
 
 ```{r}
 # install digest 0.6.19
@@ -331,7 +331,7 @@ renv::snapshot()
 renv::remove("digest")
 ```
 
-We can revert back (to the current commit and re-add digest@0.6.19) with: 
+We can revert back (to the current commit and re-add digest\@0.6.19) with:
 
 ```{r}
 ## Revert to the most recent snapshot 
@@ -344,10 +344,9 @@ If you want to revert back to an earlier snapshot saved into git you can do that
 renv::revert(commit = commit)
 ```
 
-See the commit history with: 
-`renv::history()`
+See the commit history with: `renv::history()`
 
-Update your session for the correct versions to be pulled in. 
+Update your session for the correct versions to be pulled in.
 
 Practice updating the packages your project relies on, each time saving to git. Note: Currently, only Git repositories are supported by renv::history() and renv::revert().
 
@@ -355,7 +354,7 @@ Practice updating the packages your project relies on, each time saving to git. 
 
 This is easy, just run this command after cloning the project down and your environment will match the environment in the lock file: `renv::restore()`
 
-It might also be good to make sure that you've updated to the latest versions of all packages if that aligns with your package management strategy prior to making any code changes: `renv::update()``
+It might also be good to make sure that you've updated to the latest versions of all packages if that aligns with your package management strategy prior to making any code changes: \`renv::update()\`\`
 
 *Advanced renv*
 
@@ -373,16 +372,9 @@ view(old.packages())
 
 The same process would be followed with then updating the packages, testing as needed, and then creating a new snapshot so the renv lock file is updated to the latest. This provides the added security that in case it does not pass testing the renv lock file will still point at the supported package versions and not the ones that caused the breakage.
 
-One of the more recent releases of the renv package has included [having separate profiles for the project](https://rstudio.github.io/renv/articles/profiles.html). Meaning that a developer could have a production profile, a validation profile, and testing profile that can be easily switched between while working through their workflow towards deployment into production.
+Retrieve the latest-available packages from a set of package repositories:
 
-
-Remove packages that are no longer needed with:
-
-`renv::clean()`
-
-Retrieve the latest-available packages from a set of package repositories: 
-
-```
+```         
 # supply the full repository path
 renv::checkout(repos = "https://packagemanager.rstudio.com/cran/2023-01-02")
 
@@ -390,9 +382,9 @@ renv::checkout(repos = "https://packagemanager.rstudio.com/cran/2023-01-02")
 renv::checkout(packages = "dplyr", date = "2023-01-02")
 ```
 
-Update the in-memory cache of packages from the active R package repository: 
+Update the in-memory cache of packages from the active R package repository:
 
-```
+```         
 # check available packages 
 available.packages()
 
@@ -400,6 +392,7 @@ available.packages()
 renv::refresh()
 ```
 
+One of the more recent releases of the renv package has included [having separate profiles for the project](https://rstudio.github.io/renv/articles/profiles.html). Meaning that a developer could have a production profile, a validation profile, and testing profile that can be easily switched between while working through their workflow towards deployment into production.
 
 *Troubleshooting*
 
@@ -446,11 +439,27 @@ For example, you might see: `https://packagemanager.rstudio.com/all/latest` or `
 
 Change your repo with: `options(repos = c(REPO_NAME = "https://colorado.rstudio.com/rspm/cran/__linux__/focal/2022-06-29"))` or `options(repos = c(REPO_NAME = "https://packagemanager.rstudio.com/all/latest"))`
 
-Error messages: 
+
+If using a shared cache location issues may arise around permissions for installing / changing packages installed. From renv: 
+
+> By default, packages copied into the cache will remain “owned” by the user that requested installation of that package. If you’d like renv to instead re-assign ownership of the cached package to a separate user account, you can set the RENV_CACHE_USER environment variable. When set, renv will attempt to run chown -R <package> <user> to update cache ownership after the package has been copied into the cache.
+
+For example by saving it at the project level into the .Renviron file: 
+
+```         
+library(usethis)
+usethis::edit_r_environ(scope = "project")
+```
+
+Look up your user name from terminal with: `whoami`
+
+Check file permissions from terminal with: `ls -l` or see the whole tree with `namei -l /usr/home/lisa.anders/Development/renv_version_control_demo/renv/library/R-4.2/x86_64-pc-linux-gnu/arrow`
+
+Error messages:
 
 > renv took longer than expected (11 seconds) to activate the sandbox.
 
-Use `usethis::edit_r_environ(scope = c("user"))` to open and edit the `.Renviron` file to add RENV_CONFIG_SANDBOX_ENABLED=FALSE. Restart session. 
+Use `usethis::edit_r_environ(scope = c("user"))` to open and edit the `.Renviron` file to add RENV_CONFIG_SANDBOX_ENABLED=FALSE. Restart session.
 
 ## Manifest
 
