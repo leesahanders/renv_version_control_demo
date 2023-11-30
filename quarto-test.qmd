@@ -308,8 +308,9 @@ devtools::install_version('connectapi', '0.1.1.1')
 library(connectapi)
 ```
 
+Update everything to the latest for each package (according to the repository you are pointed at) with:
 
-
+`renv::update()`
 
 Remove packages that are no longer needed with:
 
@@ -339,6 +340,8 @@ renv::revert(commit = commit)
 
 Note: Currently, only Git repositories are supported by renv::history() and renv::revert().
 
+
+
 *Setting up projects that already have renv*
 
 This is easy, just run this command after cloning the project down and your environment will match the environment in the lock file: 
@@ -349,6 +352,8 @@ This is easy, just run this command after cloning the project down and your envi
 *Advanced renv*
 
 There are a couple other commands that can be used depending on your workflow that are useful to know about.
+
+If you need to upgrade renv use this command: `renv::upgrade()`
 
 Say that your organization has a managed package host, for example Package Manager, and is using the [Shared Baseline](strategy). Meaning that all developers in the organization are pointed to a snapshot of available packages frozen to a particular date when the managing team had intentionally tested and made them available. On some cadence, let's say quarterly, the managing team goes through, performs testing again, and provides a new updated snapshot that is available for developers to switch to. There are a lot of advantages in switching with new features, resolved bugs, etc.
 
@@ -366,10 +371,6 @@ One of the more recent releases of the renv package has included [having separat
 Remove packages that are no longer needed with:
 
 `renv::clean()`
-
-Update everything to the latest for each package (according to the repository you are pointed at) with:
-
-`renv::update()`
 
 Retrieve the latest-available packages from a set of package repositories: 
 
