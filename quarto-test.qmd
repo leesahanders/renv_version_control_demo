@@ -340,8 +340,6 @@ renv::revert(commit = commit)
 
 Note: Currently, only Git repositories are supported by renv::history() and renv::revert().
 
-
-
 *Setting up projects that already have renv*
 
 This is easy, just run this command after cloning the project down and your environment will match the environment in the lock file: `renv::restore()`
