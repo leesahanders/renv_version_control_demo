@@ -25,25 +25,24 @@ You can add options to executable code like this
 
 The `echo: false` option disables the printing of code (only output is displayed).
 
+## Version Control
 
-## Version Control 
+*Topics:*
 
-*Topics:* 
+-   Cloning down a repository
+-   Keeping repositories up to date
+-   Collaboration using version control (branches, blame, etc)
+-   Advanced
 
-- Cloning down a repository
-- Keeping repositories up to date 
-- Collaboration using version control (branches, blame, etc)
-- Advanced 
+*Resources:*
 
-*Resources:* 
-
-- Happy git with R: <https://happygitwithr.com/> 
-- Deploying to Connect using CI / CD: <https://solutions.posit.co/operations/deploy-methods/ci-cd/>
-- Oh sh!t git: https://jvns.ca/blog/2018/10/27/new-zine--oh-shit--git-/
-- Allison Horst's git: https://twitter.com/allison_horst/status/1563210538510737409
-- Getting started with git in rstudio: <https://www.youtube.com/watch?v=jN6tvgt3GK8>
-- git-credentials: <https://usethis.r-lib.org/articles/articles/git-credentials.html> 
-- git-credential-helpers: <https://blog.djnavarro.net/posts/2021-08-08_git-credential-helpers/> 
+-   Happy git with R: <https://happygitwithr.com/>
+-   Deploying to Connect using CI / CD: <https://solutions.posit.co/operations/deploy-methods/ci-cd/>
+-   Oh sh!t git: https://jvns.ca/blog/2018/10/27/new-zine--oh-shit--git-/
+-   Allison Horst's git: https://twitter.com/allison_horst/status/1563210538510737409
+-   Getting started with git in rstudio: <https://www.youtube.com/watch?v=jN6tvgt3GK8>
+-   git-credentials: <https://usethis.r-lib.org/articles/articles/git-credentials.html>
+-   git-credential-helpers: <https://blog.djnavarro.net/posts/2021-08-08_git-credential-helpers/>
 
 ```{r}
 library(usethis)
@@ -58,15 +57,15 @@ On a cloud instance check that is is writing to somewhere persistent, IE into /h
 .libPaths()
 ```
 
-Check the git configuration: 
+Check the git configuration:
 
-```bash
+``` bash
 git config --list 
 ```
 
-Check if an existing repository was cloned with ssh or https: 
+Check if an existing repository was cloned with ssh or https:
 
-```bash
+``` bash
 git remote show origin
 ```
 
@@ -78,19 +77,19 @@ ls ~/.ssh
 ssh-keygen -p
 ```
 
-Check for any pre-existing credentials: 
+Check for any pre-existing credentials:
 
 ```{r}
 gh::gh_whoami()
 ```
 
-Remove any pre-existing credentials: 
+Remove any pre-existing credentials:
 
 ```{r}
 gitcreds::gitcreds_delete()
 ```
 
-Check that R is reading the correct configuration information. It’s possible to do this with gitcreds:
+Check that R is reading the correct configuration information. It's possible to do this with gitcreds:
 
 ```{r}
 gitcreds::gitcreds_list_helpers()
@@ -98,9 +97,9 @@ gitcreds::gitcreds_list_helpers()
 
 ### Change where git credentials are stored
 
-This can be useful on a cloud compute instance. For Sagemaker for example git tokens will save to the local transient instance. When the compute session is closed your tokens will be closed and lost. Instead change the location for where the credentials are stored so that they are saving to your home directory, which is mounted persistent storage. 
+This can be useful on a cloud compute instance. For Sagemaker for example git tokens will save to the local transient instance. When the compute session is closed your tokens will be closed and lost. Instead change the location for where the credentials are stored so that they are saving to your home directory, which is mounted persistent storage.
 
-```bash
+``` bash
 git config --global credential.helper 'store --file ~/.my-credentials'
 ```
 
@@ -138,7 +137,7 @@ gitcreds_get()
 
 #### Store credentials: gitcreds R environment
 
-> Recommendation: Do not store your PAT(s) in plain text in, e.g., .Renviron. In the past, this has been a common and recommended practice for pragmatic reasons. However, gitcreds/gh have now evolved to the point where it’s possible for all of us to follow better security practices.
+> Recommendation: Do not store your PAT(s) in plain text in, e.g., .Renviron. In the past, this has been a common and recommended practice for pragmatic reasons. However, gitcreds/gh have now evolved to the point where it's possible for all of us to follow better security practices.
 
 ```{r}
 usethis::edit_r_environ()
@@ -146,15 +145,15 @@ usethis::edit_r_environ()
 
 Add a line like this, but substitute your PAT:
 
-```
+```         
 GITHUB_PAT=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-Restart your R session so the credentials are applied. In my experience this method works in Sagemaker if the project is closed and then a new session with a new ec2 instance has been started. 
+Restart your R session so the credentials are applied. In my experience this method works in Sagemaker if the project is closed and then a new session with a new ec2 instance has been started.
 
 #### Clone project
 
-Use the HTTPS address for opening a new project, either through the UI or programmatically: 
+Use the HTTPS address for opening a new project, either through the UI or programmatically:
 
 ```{r}
 usethis::create_from_github(
@@ -162,7 +161,6 @@ usethis::create_from_github(
   destdir = "~/path/to/where/you/want/the/local/repo/"
 )
 ```
-
 
 ### SSH key
 
@@ -178,10 +176,10 @@ You'll copy / update code using the `SSH` method from git.
 
 From terminal:
 
-- Generate a new key with: `ssh-keygen -t ed25519 -C "your_email@example.com"`
-- Add your ssh key to the background client: `eval "$(ssh-agent -s)"` `ssh-add ~/.ssh/id_ed25519`
-- Or find an existing key with: `ls -al ~/.ssh`
-- Copy the key to your clipboard: `clip < ~/.ssh/id_ed25519.pub`
+-   Generate a new key with: `ssh-keygen -t ed25519 -C "your_email@example.com"`
+-   Add your ssh key to the background client: `eval "$(ssh-agent -s)"` `ssh-add ~/.ssh/id_ed25519`
+-   Or find an existing key with: `ls -al ~/.ssh`
+-   Copy the key to your clipboard: `clip < ~/.ssh/id_ed25519.pub`
 
 Tip: With Windows Subsystem for Linux (WSL), you can use clip.exe. Otherwise if clip isn't working, you can locate the hidden .ssh folder, open the file in your favorite text editor, and copy it to your clipboard.
 
@@ -189,7 +187,7 @@ Follow [here](https://docs.github.com/en/authentication/connecting-to-github-wit
 
 How to remove / add a password: <https://stackoverflow.com/questions/112396/how-do-i-remove-the-passphrase-for-the-ssh-key-without-having-to-create-a-new-ke>
 
-You may also need to configure some global options: 
+You may also need to configure some global options:
 
 ```         
 git config --global user.name "leesahanders"
@@ -212,15 +210,13 @@ ssh-add /root/.ssh/id_ed25519
 
 Use the SSH address to clone new projects. This also works with using git clone from the terminal.
 
-
 ### Switching to a git backed project that was shared with you
 
 If switching to a project that was shared with you need to run: `git config --global --add safe.directory /usr/home/xu.fei/shiny-test1`
 
-And then close and reopen the session. 
+And then close and reopen the session.
 
-This command tells your session to consider the shared directory as safe and allow it to be opened. Since personal credentials are cached, it will not be detected as a git project nor will you be able to push changes back to the source. Instead coordinate with the owner for any version control. 
-
+This command tells your session to consider the shared directory as safe and allow it to be opened. Since personal credentials are cached, it will not be detected as a git project nor will you be able to push changes back to the source. Instead coordinate with the owner for any version control.
 
 ### Troubleshooting
 
@@ -232,40 +228,33 @@ usethis::git_sitrep()
 gh::gh_whoami()
 ```
 
-
-> git push
-# fatal: The current branch foo has no upstream branch.
-# To push the current branch and set the remote as upstream, use
-#
-#     git push --set-upstream origin foo
+> git push \# fatal: The current branch foo has no upstream branch. \# To push the current branch and set the remote as upstream, use \# \# git push --set-upstream origin foo
 
 You can do as the error message says and explicitly set the upstream branch with --set-upstream. However I would recommend instead changing the default behavior of push to automatically set the upstream branch to the branch with the same name on the remote.
 
 ([reference](https://happygitwithr.com/git-remotes#upstream-tracking-branches))
 
-```bash
+``` bash
 git config --global push.default current
 ```
 
+> "Unable to Fork"
 
-> "Unable to Fork" 
+This can happen if you're using ssh to fetch the remote and you don't have ssh installed. However note that support for password authentication was removed on August 13, 2021 from Workbench. This means that one of the methods above needs to be done with http instead of using ssh as part of the built in UI for git cloning.
 
-This can happen if you're using ssh to fetch the remote and you don't have ssh installed. However note that support for password authentication was removed on August 13, 2021 from Workbench. This means that one of the methods above needs to be done with http instead of using ssh as part of the built in UI for git cloning. 
+## Renv
 
-## Renv 
+*Topics:*
 
-*Topics:* 
-
-- Initializing a project
-- Adding / updating packages 
-- Reverting 
-- Setting up a project using renv on another machine 
+-   Initializing a project
+-   Adding / updating packages
+-   Reverting
+-   Setting up a project using renv on another machine
 
 *Resources:*
 
-- Renv: <https://rstudio.github.io/renv/articles/renv.html>
-- There is an excellent video by David Aja discussing why he started using renv at the 2022 RStudio Conference here: <https://www.rstudio.com/conference/2022/talks/you-should-use-renv/>
-
+-   Renv: <https://rstudio.github.io/renv/articles/renv.html>
+-   There is an excellent video by David Aja discussing why he started using renv at the 2022 RStudio Conference here: <https://www.rstudio.com/conference/2022/talks/you-should-use-renv/>
 
 *What is renv*
 
@@ -273,45 +262,44 @@ Ever had your code mysteriously stop working or start producing different result
 
 renv helps you track and control package changes - making it easy to revert back if you need to. It works with your current methods of installing packages (install.packages()), and was designed to work with most data science workflows.
 
-
 *Terms*
 
-R Project - a special kind of directory of files and supporting functionality.
-Package - a collection of functions beyond base R that developers can install and use.
-Library - a directory containing installed packages.
+- R Project - a special kind of directory of files and supporting functionality. 
+- Package - a collection of functions beyond base R that developers can install and use. 
+- Library - a directory containing installed packages.
 
 *Workflow*
 
-New project -> updates -> reverting -> advanced
+New project -\> updates -\> reverting -\> advanced
 
 *New project*
 
-Initialize your project with: 
+Initialize your project with:
 
-```
+```         
 library(renv)
 renv::init()
 ```
 
-Look at the renv.lock file and see the information that has been captured about the packages supporting your project. 
+Look at the renv.lock file and see the information that has been captured about the packages supporting your project.
 
 *Making updates*
 
-Try installing a new package and then look at the renv.lock file. What did you expect to happen? What do you see? 
+Try installing a new package and then look at the renv.lock file. What did you expect to happen? What do you see?
 
-Now try running `renv::snapshot()`. What do you see now when you look at the renv.lock file? 
+Now try running `renv::snapshot()`. What do you see now when you look at the renv.lock file?
 
-The renv lock file is updated by you when you run the command to snapshot. This means you can update packages, or install new packages, without changing your lock file. 
+The renv lock file is updated by you when you run the command to snapshot. This means you can update packages, or install new packages, without changing your lock file.
 
 *How to revert*
 
-Practice updating the packages your project relies on, each time saving to git. You can see the history of your changes with: 
+Practice updating the packages your project relies on, each time saving to git. You can see the history of your changes with:
 
 `renv::history()`
 
-If you want to revert back to an earlier snapshot you can do that with: 
+If you want to revert back to an earlier snapshot you can do that with:
 
-```
+```         
 ## Revert to the most recent snapshot 
 renv::revert()
 
@@ -329,35 +317,39 @@ Note: Currently, only Git repositories are supported by renv::history() and renv
 
 *Advanced renv*
 
-There are a couple other commands that can be used depending on your workflow that are useful to know about. 
+There are a couple other commands that can be used depending on your workflow that are useful to know about.
 
-Say that your organization has a managed package host, for example Package Manager, and is using the [Shared Baseline](strategy). Meaning that all developers in the organization are pointed to a snapshot of available packages frozen to a particular date when the managing team had intentionally tested and made them available. On some cadence, let's say quarterly, the managing team goes through, performs testing again, and provides a new updated snapshot that is available for developers to switch to. There are a lot of advantages in switching with new features, resolved bugs, etc. 
+Say that your organization has a managed package host, for example Package Manager, and is using the [Shared Baseline](strategy). Meaning that all developers in the organization are pointed to a snapshot of available packages frozen to a particular date when the managing team had intentionally tested and made them available. On some cadence, let's say quarterly, the managing team goes through, performs testing again, and provides a new updated snapshot that is available for developers to switch to. There are a lot of advantages in switching with new features, resolved bugs, etc.
 
-In order for developers to know that a new release has happened (that the local package dates are out of date in reference to the repo being pointed at) they can run: 
+In order for developers to know that a new release has happened (that the local package dates are out of date in reference to the repo being pointed at) they can run:
 
-    view(old.packages())
+```         
+view(old.packages())
+```
 
-The same process would be followed with then updating the packages, testing as needed, and then creating a new snapshot so the renv lock file is updated to the latest. This provides the added security that in case it does not pass testing the renv lock file will still point at the supported package versions and not the ones that caused the breakage. 
+The same process would be followed with then updating the packages, testing as needed, and then creating a new snapshot so the renv lock file is updated to the latest. This provides the added security that in case it does not pass testing the renv lock file will still point at the supported package versions and not the ones that caused the breakage.
 
-One of the more recent releases of the renv package has included [having separate profiles for the project](https://rstudio.github.io/renv/articles/profiles.html). Meaning that a developer could have a production profile, a validation profile, and testing profile that can be easily switched between while working through their workflow towards deployment into production. 
+One of the more recent releases of the renv package has included [having separate profiles for the project](https://rstudio.github.io/renv/articles/profiles.html). Meaning that a developer could have a production profile, a validation profile, and testing profile that can be easily switched between while working through their workflow towards deployment into production.
 
 The renv.lock file can be manually changed to update the packages that are included with:
 
-    renv::modify()
-    
-Remove packages that are no longer needed with: 
+```         
+renv::modify()
+```
+
+Remove packages that are no longer needed with:
 
 `renv::clean()`
 
-Update everything to the latest for each package (according to the repository you are pointed at) with: 
+Update everything to the latest for each package (according to the repository you are pointed at) with:
 
 `renv::update()`
 
 *Troubleshooting*
 
-If you are having particular issue with a package and it keeps being pulled in from the cache then doing a complete purge and reinstall can be useful: 
+If you are having particular issue with a package and it keeps being pulled in from the cache then doing a complete purge and reinstall can be useful:
 
-```r
+``` r
 renv::purge("stringr")
 renv::purge("stringi")
 install.packages("stringr")
@@ -365,60 +357,61 @@ install.packages("stringr")
 
 `renv::purge` removes packages completely from the package cache (which may be shared across projects) rather than just removing the package from the project which is what `renv::remove` does. This can be useful if a package which had previously been installed in the cache has become corrupted or unusable, and needs to be re-installed.
 
-It may also be useful to verify both the OS you are currently useing as well as checking that the repository you are pointing towards is using the correct OS if it is pulling in the binaries. 
+It may also be useful to verify both the OS you are currently useing as well as checking that the repository you are pointing towards is using the correct OS if it is pulling in the binaries.
 
+For debian/ubuntu distributions:
 
-For debian/ubuntu distributions: 
-```bash
+``` bash
 lsb_release -a
 ```
 
-For other distributions (more broadly cross-linux compatible command): 
-```bash
+For other distributions (more broadly cross-linux compatible command):
+
+``` bash
 cat /etc/os-release
 ```
 
-Check the repository being pointed to and update it to use the URL from your package manager instance: 
-```r
+Check the repository being pointed to and update it to use the URL from your package manager instance:
+
+``` r
 options('repos')
 options(repos = c(REPO_NAME = "https://packagemanager.posit.co/cran/__linux__/jammy/latest"))
 ```
 
 Check your current repo with: `options('repos')`
 
-For example, you might see: `https://packagemanager.rstudio.com/all/latest` or `https://cran.rstudio.com/`. 
+For example, you might see: `https://packagemanager.rstudio.com/all/latest` or `https://cran.rstudio.com/`.
 
 Change your repo with: `options(repos = c(REPO_NAME = "https://colorado.rstudio.com/rspm/cran/__linux__/focal/2022-06-29"))` or `options(repos = c(REPO_NAME = "https://packagemanager.rstudio.com/all/latest"))`
-
 
 ## Manifest
 
 *Topics:*
 
-- Create a manifest so Connect can replicate your environment 
+-   Create a manifest so Connect can replicate your environment
 
 *Resources:*
 
-- rsconnect: <https://github.com/rstudio/rsconnect> 
-- git issue discussing the quarto path error: <https://github.com/rstudio/rsconnect/issues/658> 
+-   rsconnect: <https://github.com/rstudio/rsconnect>
+-   git issue discussing the quarto path error: <https://github.com/rstudio/rsconnect/issues/658>
 
 *Quarto Manifests trick:*
 
-The trick I found was to use this command for writing the manifest (that way it is pointing explicitly at your quarto version, fixed with (this git issue)[https://github.com/rstudio/rsconnect/issues/658]: 
+The trick I found was to use this command for writing the manifest (that way it is pointing explicitly at your quarto version, fixed with (this git issue)\[https://github.com/rstudio/rsconnect/issues/658\]:
 
-```r
+``` r
 rsconnect::writeManifest(quarto = Sys.which("quarto"), appPrimaryDoc = "quarto-test.qmd")
 ```
 
 After setting the work directory to the appropriate folder:
 
-```r
+``` r
 setwd("/usr/home/lisa.anders/Development/renv_version_control_demo")
 ```
 
-The manifest should declare the details on the environment, including R version, quarto version, package versions, etc: 
+The manifest should declare the details on the environment, including R version, quarto version, package versions, etc:
 
-```
+```         
 {
   "version": 1,
   "locale": "en_US",
@@ -464,74 +457,70 @@ The manifest should declare the details on the environment, including R version,
 
 ## Environment Variables
 
-When working with pulling data from secure databases or other sources a developer might find themselves in a situation of needing to provide very sensitive information, such as a password or a token, in order to access the data that is needed or to successfully deploy a project. Handling those secrets in way that doesn't expose them in the code directly is critical and where using [environmental variable's for securing sensitive variables](https://db.rstudio.com/best-practices/deployment/) is strongly recommended. 
+When working with pulling data from secure databases or other sources a developer might find themselves in a situation of needing to provide very sensitive information, such as a password or a token, in order to access the data that is needed or to successfully deploy a project. Handling those secrets in way that doesn't expose them in the code directly is critical and where using [environmental variable's for securing sensitive variables](https://db.rstudio.com/best-practices/deployment/) is strongly recommended.
 
-Additionally there may be parameters that are often needed that can be accessed as a variable more easily rather than having to type in every time. 
+Additionally there may be parameters that are often needed that can be accessed as a variable more easily rather than having to type in every time.
 
-For both of these cases knowing how environment variables can be leveraged can be very rewarding and it is surprising how little effort it can to take to set up. 
+For both of these cases knowing how environment variables can be leveraged can be very rewarding and it is surprising how little effort it can to take to set up.
 
 ### Working with the .Renviron file
 
-When R starts it loads a bunch of variables, settings, and configs for the user. This is really powerful and some of the magic for how it can work so apparently seamlessly. 
+When R starts it loads a bunch of variables, settings, and configs for the user. This is really powerful and some of the magic for how it can work so apparently seamlessly.
 
-However for power users we can leverage these behind the scenes config files so that we can include such things as variables in our project without including it in our code. The .Renviron file is the one most commonly interacted with for adding sensitive variables to a project in order to protect them from being exposed in the code. 
+However for power users we can leverage these behind the scenes config files so that we can include such things as variables in our project without including it in our code. The .Renviron file is the one most commonly interacted with for adding sensitive variables to a project in order to protect them from being exposed in the code.
 
-With increased use of these behind the scenes config files and the growing direction of arranging code into projects there was the development of giving, on startup, having multiple options for each config file that can be loaded depending on what the user specifies. Broadly speaking there are two levels of config files: 
- - User 
- - Project 
- 
-On startup, since R is trying to make things as seamless as possible for the user, it will use some logic to figure out which config to use. It will assume that if a project level config exists it should load that one (and not any others). If that project level config doesn't exist, then it will default to the user level config. For more details on the different config files and the nuances see [Managing R with .Rprofile, .Renviron, Rprofile.site, Renviron.site, rsession.conf, and repos.conf](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf). 
+With increased use of these behind the scenes config files and the growing direction of arranging code into projects there was the development of giving, on startup, having multiple options for each config file that can be loaded depending on what the user specifies. Broadly speaking there are two levels of config files: - User - Project
 
-Just to re-iterate the key takeaway: When in doubt note that the **project level file is given preference over user level config files**. Only if the project level config file doesn't exist will the user level file be sourced/pulled in. 
+On startup, since R is trying to make things as seamless as possible for the user, it will use some logic to figure out which config to use. It will assume that if a project level config exists it should load that one (and not any others). If that project level config doesn't exist, then it will default to the user level config. For more details on the different config files and the nuances see [Managing R with .Rprofile, .Renviron, Rprofile.site, Renviron.site, rsession.conf, and repos.conf](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf).
 
-There is a really excellent [overview of R's startup process here](https://rviews.rstudio.com/2017/04/19/r-for-enterprise-understanding-r-s-startup/) but in short it can be thought of this way: 
+Just to re-iterate the key takeaway: When in doubt note that the **project level file is given preference over user level config files**. Only if the project level config file doesn't exist will the user level file be sourced/pulled in.
+
+There is a really excellent [overview of R's startup process here](https://rviews.rstudio.com/2017/04/19/r-for-enterprise-understanding-r-s-startup/) but in short it can be thought of this way:
 
 #### Example with a user level .Renviron config file
 
 usethis has a function for creating and editing the .Renviron file
 
-    library(usethis)
-    usethis::edit_r_environ()
+```         
+library(usethis)
+usethis::edit_r_environ()
+```
 
 Add the variables to that file in the format `variable_name = "variable_value"` and save it. Restart the session so the new environment variables will be loaded with ctrl shift f10 or through the RStudio IDE
 
 Saved variables can be accessed with:
 
-    variable_name <- Sys.getenv("variable_name")
+```         
+variable_name <- Sys.getenv("variable_name")
+```
 
 When working in a more complex environment structure where separate project, site, and user environments are being support [this support article has useful information](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf) with a [deeper dive into R's startup here](https://rviews.rstudio.com/2017/04/19/r-for-enterprise-understanding-r-s-startup/).
 
 #### Example with a project level .Renviron config file
 
-Storing secrets securely can be done using the [edit_r_environ function from the usethis package](https://usethis.r-lib.org/reference/edit.html). For more overview see [this overview](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf). 
+Storing secrets securely can be done using the [edit_r_environ function from the usethis package](https://usethis.r-lib.org/reference/edit.html). For more overview see [this overview](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf).
 
-Example: 
+Example:
 
-```
+```         
 library(usethis)
 usethis::edit_r_environ(scope = "project")
 ```
 
-Accessing those stored parameters later can be done using `Sys.getenv("DB_NAME")`. 
+Accessing those stored parameters later can be done using `Sys.getenv("DB_NAME")`.
 
-Be sure to add the project level .Renviron file to your .gitignore so you aren't exposing secrets when code is being saved to your git repository. Similarly this can be done with the `edit_git_ignore(scope = c("user", "project"))` function. For more best practices see [securing credentials](https://db.rstudio.com/best-practices/managing-credentials). 
+Be sure to add the project level .Renviron file to your .gitignore so you aren't exposing secrets when code is being saved to your git repository. Similarly this can be done with the `edit_git_ignore(scope = c("user", "project"))` function. For more best practices see [securing credentials](https://db.rstudio.com/best-practices/managing-credentials).
 
- - While typically explicitly listing the file name is the desired addition, wildcards can be added to exclude a type of file. For example: `*.html`. 
+-   While typically explicitly listing the file name is the desired addition, wildcards can be added to exclude a type of file. For example: `*.html`.
 
-After updating these files the project should be closed and re-opened for any additions to be pulled in. One way to do this is through session -> restart R (ctrl-shift-f10). 
+After updating these files the project should be closed and re-opened for any additions to be pulled in. One way to do this is through session -\> restart R (ctrl-shift-f10).
 
 #### Example with project level github secrets for environment variables
 
 Another approach, particularly useful when automating testing and deployments using github actions, is to include the environment variables as secrets. Once this has been added through the git UI for the project they can then be referenced in the relevant deployment .yaml file with something like `CONNECT_ENV_SET_ZD_USER: ${{ secrets.ZD_USER }}`. In the R scripts they will be referenced as usual with something like `Sys.getenv("DB_NAME")`.
 
-#### References for adding environment variables through the Connect UI 
+#### References for adding environment variables through the Connect UI
 
 Starting with version 1.6, RStudio Connect allows [Environment Variables](https://docs.rstudio.com/connect/admin/security-and-auditing/#application-environment-variables). The variables are encrypted on-disk, and in-memory.
 
 This can be done at the project level with [securing deployment](https://db.rstudio.com/best-practices/deployment/) through the [Connect UI](https://support.rstudio.com/hc/en-us/articles/228272368-Managing-your-content-in-RStudio-Connect).
-
-
-
-
-
-
