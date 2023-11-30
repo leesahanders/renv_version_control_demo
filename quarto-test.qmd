@@ -285,11 +285,20 @@ Look at the renv.lock file and see the information that has been captured about 
 
 *Making updates*
 
+```{r}
+library(arrow)
+```
+
+
 Try installing a new package and then look at the renv.lock file. What did you expect to happen? What do you see?
 
 Now try running `renv::snapshot()`. What do you see now when you look at the renv.lock file?
 
 The renv lock file is updated by you when you run the command to snapshot. This means you can update packages, or install new packages, without changing your lock file.
+
+Remove packages that are no longer needed with:
+
+`renv::clean()`
 
 *How to revert*
 
@@ -331,11 +340,6 @@ The same process would be followed with then updating the packages, testing as n
 
 One of the more recent releases of the renv package has included [having separate profiles for the project](https://rstudio.github.io/renv/articles/profiles.html). Meaning that a developer could have a production profile, a validation profile, and testing profile that can be easily switched between while working through their workflow towards deployment into production.
 
-The renv.lock file can be manually changed to update the packages that are included with:
-
-```         
-renv::modify()
-```
 
 Remove packages that are no longer needed with:
 
@@ -345,7 +349,34 @@ Update everything to the latest for each package (according to the repository yo
 
 `renv::update()`
 
+Retrieve the latest-available packages from a set of package repositories: 
+
+```
+# supply the full repository path
+renv::checkout(repos = "https://packagemanager.rstudio.com/cran/2023-01-02")
+
+# only check out some subset of packages (and their recursive dependencies)
+renv::checkout(packages = "dplyr", date = "2023-01-02")
+```
+
+Update the in-memory cache of packages from the active R package repository: 
+
+```
+# check available packages 
+available.packages()
+
+# refresh the local available packages database (the old locally cached db will be removed)
+renv::refresh()
+```
+
+
 *Troubleshooting*
+
+The renv.lock file can be manually changed to update the packages that are included with:
+
+```         
+renv::modify()
+```
 
 If you are having particular issue with a package and it keeps being pulled in from the cache then doing a complete purge and reinstall can be useful:
 
