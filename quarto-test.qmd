@@ -461,6 +461,194 @@ Error messages:
 
 Use `usethis::edit_r_environ(scope = c("user"))` to open and edit the `.Renviron` file to add RENV_CONFIG_SANDBOX_ENABLED=FALSE. Restart session.
 
+
+
+## Environment Variables
+
+When working with pulling data from secure databases or other sources a developer might find themselves in a situation of needing to provide very sensitive information, such as a password or a token, in order to access the data that is needed or to successfully deploy a project. Handling those secrets in way that doesn't expose them in the code directly is critical and where using [environmental variable's for securing sensitive variables](https://db.rstudio.com/best-practices/deployment/) is strongly recommended.
+
+Additionally there may be parameters that are often needed that can be accessed as a variable more easily rather than having to type in every time.
+
+For both of these cases knowing how environment variables can be leveraged can be very rewarding and it is surprising how little effort it can to take to set up.
+
+### Working with the .Renviron file
+
+When R starts it loads a bunch of variables, settings, and configs for the user. This is really powerful and some of the magic for how it can work so apparently seamlessly.
+
+However for power users we can leverage these behind the scenes config files so that we can include such things as variables in our project without including it in our code. The .Renviron file is the one most commonly interacted with for adding sensitive variables to a project in order to protect them from being exposed in the code.
+
+With increased use of these behind the scenes config files and the growing direction of arranging code into projects there was the development of giving, on startup, having multiple options for each config file that can be loaded depending on what the user specifies. Broadly speaking there are two levels of config files: - User - Project
+
+On startup, since R is trying to make things as seamless as possible for the user, it will use some logic to figure out which config to use. It will assume that if a project level config exists it should load that one (and not any others). If that project level config doesn't exist, then it will default to the user level config. For more details on the different config files and the nuances see [Managing R with .Rprofile, .Renviron, Rprofile.site, Renviron.site, rsession.conf, and repos.conf](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf).
+
+Just to re-iterate the key takeaway: When in doubt note that the **project level file is given preference over user level config files**. Only if the project level config file doesn't exist will the user level file be sourced/pulled in.
+
+There is a really excellent [overview of R's startup process here](https://rviews.rstudio.com/2017/04/19/r-for-enterprise-understanding-r-s-startup/) but in short it can be thought of this way:
+
+#### Example with a user level .Renviron config file
+
+usethis has a function for creating and editing the .Renviron file
+
+```         
+library(usethis)
+usethis::edit_r_environ()
+```
+
+Add the variables to that file in the format `variable_name = "variable_value"` and save it. Restart the session so the new environment variables will be loaded with ctrl shift f10 or through the RStudio IDE
+
+Saved variables can be accessed with:
+
+```         
+variable_name <- Sys.getenv("variable_name")
+```
+
+When working in a more complex environment structure where separate project, site, and user environments are being support [this support article has useful information](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf) with a [deeper dive into R's startup here](https://rviews.rstudio.com/2017/04/19/r-for-enterprise-understanding-r-s-startup/).
+
+#### Example with a project level .Renviron config file
+
+Storing secrets securely can be done using the [edit_r_environ function from the usethis package](https://usethis.r-lib.org/reference/edit.html). For more overview see [this overview](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf).
+
+Example:
+
+```         
+library(usethis)
+usethis::edit_r_environ(scope = "project")
+```
+
+Accessing those stored parameters later can be done using `Sys.getenv("DB_NAME")`.
+
+Be sure to add the project level .Renviron file to your .gitignore so you aren't exposing secrets when code is being saved to your git repository. Similarly this can be done with the `edit_git_ignore(scope = c("user", "project"))` function. For more best practices see [securing credentials](https://db.rstudio.com/best-practices/managing-credentials).
+
+-   While typically explicitly listing the file name is the desired addition, wildcards can be added to exclude a type of file. For example: `*.html`.
+
+After updating these files the project should be closed and re-opened for any additions to be pulled in. One way to do this is through session -\> restart R (ctrl-shift-f10).
+
+#### Example with project level github secrets for environment variables
+
+Another approach, particularly useful when automating testing and deployments using github actions, is to include the environment variables as secrets. Once this has been added through the git UI for the project they can then be referenced in the relevant deployment .yaml file with something like `CONNECT_ENV_SET_ZD_USER: ${{ secrets.ZD_USER }}`. In the R scripts they will be referenced as usual with something like `Sys.getenv("DB_NAME")`.
+
+#### Environment variables in Python 
+
+Set an environment variable in the code: 
+
+```python
+import os
+os.environ["TEST"] = "This test was successful"
+```
+
+Access Environment Variable later: 
+
+```python
+print(os.environ['TEST'])
+```
+
+List of all environment variables:
+
+```python
+print(os.environ)
+```
+
+You can also wrap it in a try loop if it is a variable you aren't sure is set: 
+
+```python
+try:  
+   os.environ["FOO"]
+except KeyError: 
+   print "Please set the environment variable FOO"
+   sys.exit(1)
+```
+
+Resources: 
+
+- [RStudio Connect User Guide - Shiny for Python](https://docs.rstudio.com/connect/user/shiny-python/)
+- [Environment variables](https://datagy.io/python-environment-variables/)
+
+##### Reticulate
+
+```{r}
+require(reticulate)
+repl_python()
+```
+
+Create a variable, for example `py_var = 1`, then `quit`
+
+#### System level environment variables 
+
+Environment variables can also be set at the system level (linux, mac, windows, etc). Those system level environment variables can then be pulled into your active Python or R sessions. 
+
+There is a concept of two different levels of variables at the OS level: 
+
+- Shell variable - these variables are contained only inside the current shell. 
+- Environment variable - Variables exist in current shell but are inherited by child shells or processes
+
+Try these commands from terminal to see how variables work: 
+
+```bash
+#Create a shell variable: 
+TEST_VAR='Hello World!'
+
+#Verify it's a shell variable: 
+set | grep TEST_VAR
+
+#Verify it is not an environment variable: 
+printenv | grep TEST_VAR
+
+#Turn it into an enviornment variable with export: 
+export TEST_VAR
+
+#Set an environment variable in a single step, without making it a shell variable first: 
+export NEW_VAR="Testing export"
+
+#Check that the new variable is available: 
+echo $NEW_VAR
+
+#Turn the variable back into a shell variable: 
+export -n TEST_VAR
+
+#Remove the variable entirely: 
+unset TEST_VAR
+```
+
+Unfortunately this method doesn't have a way of passing enviornment variables to the parent shell. This is intentional since it prevents programs from impacting operating environments out of scope. 
+
+Notes: 
+
+- `set` is used in windows, `export` for mac or linux. 
+- `%%` is used in windows, `$` in linux
+
+
+These aren't working: 
+
+Read that variable from R: 
+
+```r
+system2(command = "echo",
+        args    = c("$HOME"))
+
+system2(command = "set",
+        args    = c("| grep HOME"))
+```
+
+Read that variable from Python: 
+
+```python
+import os
+print(os.environ['HOME'])
+```
+
+References: 
+
+- System commands in R scripts: <https://www.r-bloggers.com/2021/09/how-to-use-system-commands-in-your-r-script-or-package/> 
+- How to pass bash variable into R script: <https://stackoverflow.com/questions/56777529/how-to-pass-bash-variable-into-r-script> 
+- R command line academy: <https://bash-intro.rsquaredacademy.com/r-command-line.html> 
+- Read and set environment and shell variables in linux: <https://www.digitalocean.com/community/tutorials/how-to-read-and-set-environmental-and-shell-variables-on-linux> 
+
+#### Add environment variables through the Connect UI
+
+Starting with version 1.6, RStudio Connect allows [Environment Variables](https://docs.rstudio.com/connect/admin/security-and-auditing/#application-environment-variables). The variables are encrypted on-disk, and in-memory.
+
+This can be done at the project level with [securing deployment](https://db.rstudio.com/best-practices/deployment/) through the [Connect UI](https://support.rstudio.com/hc/en-us/articles/228272368-Managing-your-content-in-RStudio-Connect).
+
 ## Manifest
 
 *Topics:*
@@ -533,73 +721,3 @@ The manifest should declare the details on the environment, including R version,
 ```
 
 The renv generated .Rprofile file should not be included in deployments to RStudio Connect.
-
-## Environment Variables
-
-When working with pulling data from secure databases or other sources a developer might find themselves in a situation of needing to provide very sensitive information, such as a password or a token, in order to access the data that is needed or to successfully deploy a project. Handling those secrets in way that doesn't expose them in the code directly is critical and where using [environmental variable's for securing sensitive variables](https://db.rstudio.com/best-practices/deployment/) is strongly recommended.
-
-Additionally there may be parameters that are often needed that can be accessed as a variable more easily rather than having to type in every time.
-
-For both of these cases knowing how environment variables can be leveraged can be very rewarding and it is surprising how little effort it can to take to set up.
-
-### Working with the .Renviron file
-
-When R starts it loads a bunch of variables, settings, and configs for the user. This is really powerful and some of the magic for how it can work so apparently seamlessly.
-
-However for power users we can leverage these behind the scenes config files so that we can include such things as variables in our project without including it in our code. The .Renviron file is the one most commonly interacted with for adding sensitive variables to a project in order to protect them from being exposed in the code.
-
-With increased use of these behind the scenes config files and the growing direction of arranging code into projects there was the development of giving, on startup, having multiple options for each config file that can be loaded depending on what the user specifies. Broadly speaking there are two levels of config files: - User - Project
-
-On startup, since R is trying to make things as seamless as possible for the user, it will use some logic to figure out which config to use. It will assume that if a project level config exists it should load that one (and not any others). If that project level config doesn't exist, then it will default to the user level config. For more details on the different config files and the nuances see [Managing R with .Rprofile, .Renviron, Rprofile.site, Renviron.site, rsession.conf, and repos.conf](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf).
-
-Just to re-iterate the key takeaway: When in doubt note that the **project level file is given preference over user level config files**. Only if the project level config file doesn't exist will the user level file be sourced/pulled in.
-
-There is a really excellent [overview of R's startup process here](https://rviews.rstudio.com/2017/04/19/r-for-enterprise-understanding-r-s-startup/) but in short it can be thought of this way:
-
-#### Example with a user level .Renviron config file
-
-usethis has a function for creating and editing the .Renviron file
-
-```         
-library(usethis)
-usethis::edit_r_environ()
-```
-
-Add the variables to that file in the format `variable_name = "variable_value"` and save it. Restart the session so the new environment variables will be loaded with ctrl shift f10 or through the RStudio IDE
-
-Saved variables can be accessed with:
-
-```         
-variable_name <- Sys.getenv("variable_name")
-```
-
-When working in a more complex environment structure where separate project, site, and user environments are being support [this support article has useful information](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf) with a [deeper dive into R's startup here](https://rviews.rstudio.com/2017/04/19/r-for-enterprise-understanding-r-s-startup/).
-
-#### Example with a project level .Renviron config file
-
-Storing secrets securely can be done using the [edit_r_environ function from the usethis package](https://usethis.r-lib.org/reference/edit.html). For more overview see [this overview](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf).
-
-Example:
-
-```         
-library(usethis)
-usethis::edit_r_environ(scope = "project")
-```
-
-Accessing those stored parameters later can be done using `Sys.getenv("DB_NAME")`.
-
-Be sure to add the project level .Renviron file to your .gitignore so you aren't exposing secrets when code is being saved to your git repository. Similarly this can be done with the `edit_git_ignore(scope = c("user", "project"))` function. For more best practices see [securing credentials](https://db.rstudio.com/best-practices/managing-credentials).
-
--   While typically explicitly listing the file name is the desired addition, wildcards can be added to exclude a type of file. For example: `*.html`.
-
-After updating these files the project should be closed and re-opened for any additions to be pulled in. One way to do this is through session -\> restart R (ctrl-shift-f10).
-
-#### Example with project level github secrets for environment variables
-
-Another approach, particularly useful when automating testing and deployments using github actions, is to include the environment variables as secrets. Once this has been added through the git UI for the project they can then be referenced in the relevant deployment .yaml file with something like `CONNECT_ENV_SET_ZD_USER: ${{ secrets.ZD_USER }}`. In the R scripts they will be referenced as usual with something like `Sys.getenv("DB_NAME")`.
-
-#### References for adding environment variables through the Connect UI
-
-Starting with version 1.6, RStudio Connect allows [Environment Variables](https://docs.rstudio.com/connect/admin/security-and-auditing/#application-environment-variables). The variables are encrypted on-disk, and in-memory.
-
-This can be done at the project level with [securing deployment](https://db.rstudio.com/best-practices/deployment/) through the [Connect UI](https://support.rstudio.com/hc/en-us/articles/228272368-Managing-your-content-in-RStudio-Connect).
