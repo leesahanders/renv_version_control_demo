@@ -577,3 +577,20 @@ Another approach, particularly useful when automating testing and deployments us
 Starting with version 1.6, RStudio Connect allows [Environment Variables](https://docs.rstudio.com/connect/admin/security-and-auditing/#application-environment-variables). The variables are encrypted on-disk, and in-memory.
 
 This can be done at the project level with [securing deployment](https://db.rstudio.com/best-practices/deployment/) through the [Connect UI](https://support.rstudio.com/hc/en-us/articles/228272368-Managing-your-content-in-RStudio-Connect).
+
+
+## System dependencies 
+
+### Pak 
+
+<https://pak.r-lib.org/reference/pkg_deps.html?q=dependenc#null> 
+
+Michael has an example here: <https://github.com/michaelmayer2/pak-singularity-example/> 
+
+### Posit Package Manager (free)
+
+<https://docs.posit.co/rspm/user/packages/viewing-package/> 
+
+### Posit Package Manager (paid for)
+
+<https://docs.posit.co/rspm/admin/appendix/system-dependency-detection/> 

@@ -704,7 +704,6 @@ The renv generated .Rprofile file should not be included in deployments to RStud
 
 ## System dependencies 
 
-
 ### Pak 
 
 <https://pak.r-lib.org/reference/pkg_deps.html?q=dependenc#null> 
